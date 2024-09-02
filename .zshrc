@@ -59,9 +59,11 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/atlejensen/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/atlejensen/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/laetho/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/laetho/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/home/snutz/google-cloud-sk/path.zsh.inc']; then . '/home/snutz/google-cloud-sdk/path.zsh.inc'; fi
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/atlejensen/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/atlejensen/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/laetho/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/laetho/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/home/snutz/google-cloud-sdk/completion.zsh.inc']; then . '/home/snutz/google-cloud-sdk/completion.zsh.inc'; fi
 # Added direnv
 eval "$(direnv hook zsh)"
 # Added The Fuck
