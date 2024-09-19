@@ -22,7 +22,7 @@ zinit light Aloxaf/fzf-tab
 autoload -U compinit && compinit
 zinit cdreplay -q
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/go:$HOME/go/bin:$PATH
+export PATH=$HOME/go:$HOME/go/bin:$PATH:/opt/google-cloud-cli/bin:~/.cargo/bin/
 # Set vim as EDITOR
 export EDITOR=vim
 # Path to your oh-my-zsh installation.
@@ -31,9 +31,6 @@ export ZSH="$HOME/.oh-my-zsh"
 export GONOPROXY='github.com/Mattilsynet/*'
 export GONOSUMDB='github.com/Mattilsynet/*'
 export GOPRIVATE='github.com/Mattilsynet/*'
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/atlejensen/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 export FZF_BASE=/usr/bin
 source $ZSH/oh-my-zsh.sh
 # User configuration
@@ -60,16 +57,16 @@ setopt hist_ignore_dups
 setopt hist_find_no_dups
 # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/laetho/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/laetho/google-cloud-sdk/path.zsh.inc'; fi
-if [ -f '/home/snutz/google-cloud-sk/path.zsh.inc']; then . '/home/snutz/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/home/snutz/google-cloud-sk/path.zsh.inc' ]; then . '/home/snutz/google-cloud-sdk/path.zsh.inc'; fi
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/laetho/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/laetho/google-cloud-sdk/completion.zsh.inc'; fi
-if [ -f '/home/snutz/google-cloud-sdk/completion.zsh.inc']; then . '/home/snutz/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/home/snutz/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/snutz/google-cloud-sdk/completion.zsh.inc'; fi
 # Added direnv
 eval "$(direnv hook zsh)"
 # Added The Fuck
 eval $(thefuck --alias)
 # Added zoxide replacement for cd
-eval "$(zoxide init --cmd cd zsh)"
+eval "$(/usr/bin/zoxide init zsh)"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 # Completion styling

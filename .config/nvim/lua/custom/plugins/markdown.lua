@@ -1,4 +1,5 @@
 return {
+  --[[
   {
     -- INFO: Highlight markdown codeblocks in neovim.
     "yaocccc/nvim-hl-mdcodeblock.lua",
@@ -7,6 +8,7 @@ return {
       require('hl-mdcodeblock').setup()
     end
   },
+  --]]
   {
     -- INFO: Making tables in MD easier with :EasyTablesCreateNew
     "Myzel394/easytables.nvim",
