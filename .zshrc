@@ -40,7 +40,6 @@ alias gmtv='go mod tidy && go mod vendor'
 alias ls="eza --icons=auto --long --all"
 alias l="ls"
 alias ll="ls"
-alias cat="bat"
 alias vim="nvim"
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # Manage history file
@@ -66,7 +65,9 @@ eval "$(direnv hook zsh)"
 # Added The Fuck
 eval $(thefuck --alias)
 # Added zoxide replacement for cd
-eval "$(/usr/bin/zoxide init zsh)"
+if [ -f /usr/bin/zoxide ]; then eval "$(/usr/bin/zoxide init zsh)"; fi
+if [ -f /opt/homebrew/bin/zoxide ]; then eval "$(/opt/homebrew/bin/zoxide init zsh)"; fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 # Completion styling
@@ -75,3 +76,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/laetho/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
