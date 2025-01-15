@@ -11,7 +11,10 @@ local on_attach = function(client, bufnr)
 
   if client.server_capabilities.inlayHintProvider then
     vim.g.inlay_hints_visible = true
-    vim.lsp.inlay_hint.enable(bufnr, nil)
+    local success, err = pcall(vim.lsp.inlay_hint, bufnr, true)
+    if not success then
+      vim.notify("Error enabling inlay hints: " .. err, vim.log.levels.ERROR)
+    end
   end
 
   local nmap = function(keys, func, desc)
