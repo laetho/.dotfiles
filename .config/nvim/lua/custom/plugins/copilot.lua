@@ -1,8 +1,8 @@
 return {
-  "zbirenbaum/copilot.lua",
-  event = "InsertEnter",
+  'zbirenbaum/copilot.lua',
+  event = 'InsertEnter',
   config = function()
-    require("copilot").setup({
+    require('copilot').setup {
       panel = {
         enabled = false,
       },
@@ -18,8 +18,8 @@ return {
         hgcommit = false,
         svn = false,
         cvs = false,
-        ["."] = false,
+        ['.'] = false,
       },
-    })
+    }
   end,
 }

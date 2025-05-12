@@ -1,3 +1,4 @@
 return {
- "nvim-zh/better-escape.vim", event = {"InsertEnter"}
+  'nvim-zh/better-escape.vim',
+  event = { 'InsertEnter' },
 }

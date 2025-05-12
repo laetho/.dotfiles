@@ -8,7 +8,7 @@ return {
       flavour = "mocha",
       background = {
         dark = "mocha",
-        light = "mocha",
+        light = "latte",
       },
       dim_inactive = {
         enabled = true,    -- dims the background color of inactive window

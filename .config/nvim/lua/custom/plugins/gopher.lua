@@ -18,5 +18,11 @@ return {
       "<cmd>GoIfErr<cr>",
       desc = "Generate if err check",
     },
+    {
+      "<leader>gta",
+      mode = "n",
+      "<cmd>GoTestAdd<cr>",
+      desc = "Generate test for current function",
+    }
   },
 }
