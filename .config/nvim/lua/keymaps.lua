@@ -13,7 +13,6 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 -- Diagnostic keymaps
 vim.keymap.set('n', 'ø', vim.diagnostic.goto_prev, { desc = 'Go to previous diagnostic message' })
-
 vim.keymap.set('n', 'æ', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', 'oo', '<cmd>put<CR>', { desc = 'make newline but stay in normal mode' })
 vim.keymap.set('n', 'OO', '<cmd>-put<CR>', { desc = 'make newline above but stay in normal mode' })

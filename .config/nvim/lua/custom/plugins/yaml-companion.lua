@@ -1,25 +1,25 @@
 return {
-  { "b0o/SchemaStore.nvim" },
+  { 'b0o/SchemaStore.nvim' },
   {
-    "someone-stole-my-name/yaml-companion.nvim",
+    'someone-stole-my-name/yaml-companion.nvim',
     dependencies = {
-      { "neovim/nvim-lspconfig" },
-      { "nvim-lua/plenary.nvim" },
-      { "nvim-telescope/telescope.nvim" },
+      { 'neovim/nvim-lspconfig' },
+      { 'nvim-lua/plenary.nvim' },
+      { 'nvim-telescope/telescope.nvim' },
     },
-    ft = { "yaml" },
+    ft = { 'yaml' },
     opts = {
       builtin_matchers = {
         -- Detects Kubernetes files based on content
         kubernetes = { enabled = false },
-        cloud_init = { enabled = false }
+        cloud_init = { enabled = false },
       },
 
       -- Additional schemas available in Telescope picker
       schemas = {
         {
-          name = "wadm oam manifest",
-          uri = "https://raw.githubusercontent.com/wasmCloud/wadm/refs/heads/main/oam.schema.json",
+          name = 'wadm oam manifest',
+          uri = 'https://raw.githubusercontent.com/wasmCloud/wadm/refs/heads/main/oam.schema.json',
         },
       },
 
@@ -36,22 +36,23 @@ return {
             hover = true,
             schemaStore = {
               enable = true,
-              url = "https://www.schemastore.org/api/json/catalog.json",
+              url = 'https://www.schemastore.org/api/json/catalog.json',
             },
             schemaDownload = { enable = true },
-            schemas = {
-            },
-            trace = { server = "debug" },
+            schemas = {},
+            trace = { server = 'debug' },
           },
         },
       },
     },
     config = function(_, opts)
-      local cfg = require("yaml-companion").setup(opts)
+      local cfg = require('yaml-companion').setup(opts)
 
-      require("telescope").load_extension("yaml_schema")
-      require("lspconfig")["yamlls"].setup(cfg)
-      vim.api.nvim_create_user_command("YamlSelect", function() vim.cmd("Telescope yaml_schema") end, {})
+      require('telescope').load_extension 'yaml_schema'
+      require('lspconfig')['yamlls'].setup(cfg)
+      vim.api.nvim_create_user_command('YamlSelect', function()
+        vim.cmd 'Telescope yaml_schema'
+      end, {})
 
       -- get schema for current buffer
     end,
