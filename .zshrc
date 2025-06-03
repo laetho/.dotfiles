@@ -81,8 +81,4 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 export PATH="/Users/laetho/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -zsh)"
-
 export OPENAI_API_KEY=$(cat ~/chatgptkey.txt)
