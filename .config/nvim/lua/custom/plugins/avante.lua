@@ -15,9 +15,11 @@ return {
     --   --reasoning_effort = "medium", -- low|medium|high, only used for reasoning models
     -- },
     provider = 'ollama',
-    ollama = {
-      endpoint = 'http://localhost:11434',
-      model = 'codegemma:latest',
+    providers = {
+      ollama = {
+        endpoint = 'http://localhost:11434',
+        model = 'codegemma:latest',
+      },
     },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
