@@ -3,7 +3,7 @@
 	name = Lars Erik Thorsplass
 
 
-[url "ssh://git@githuyb.com/laetho"]
+[url "ssh://git@github.com/laetho"]
 	insteadOf = https://github.com/laetho
 
 [url "ssh://git@github.com/Mattilsynet"]
