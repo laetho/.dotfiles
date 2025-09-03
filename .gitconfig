@@ -1,0 +1,17 @@
+[user]
+	email = thorsplass@gmail.com
+	name = Lars Erik Thorsplass
+
+
+[url "ssh://git@githuyb.com/laetho"]
+	insteadOf = https://github.com/laetho
+
+[url "ssh://git@github.com/Mattilsynet"]
+	insteadOf = https://github.com/Mattilsynet
+
+[url "ssh://git@github.com/Mattilsynet"]
+	insteadOf = https://github.com/mattilsynet
+
+
+[includeIf "hasconfig:remote.*.url:git@github.com:Mattilsynet/"]
+	path = ~/.gitconfig-mattilsynet
