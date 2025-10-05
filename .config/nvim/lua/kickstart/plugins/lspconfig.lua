@@ -19,7 +19,7 @@ return {
       -- Automatically install LSPs and related tools to stdpath for Neovim
       -- Mason must be loaded before its dependents so we need to set it up here.
       -- NOTE: `opts = {}` is the same as calling `require('mason').setup({})`
-      { 'williamboman/mason.nvim', opts = {} },
+      { 'williamboman/mason.nvim',           opts = {} },
       { 'williamboman/mason-lspconfig.nvim', opts = {} },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -216,6 +216,7 @@ return {
           root_markers = { 'go.work', 'go.mod', '.git' },
           settings = {
             gopls = {
+              buildFlags = { "-tags=tinygo,rp2040,pico_w" },
               codelenses = {
                 gc_details = false,
                 generate = true,
@@ -246,6 +247,10 @@ return {
               usePlaceholders = true,
               completeUnimported = true,
               directoryFilters = { '-.git', '-.vscode', '-.idea', '-.vscode-test', '-node_modules' },
+              cmd_env = {
+                TINYGOROOT = vim.fn.systemlist("tinygo env TINYGOROOT")[1],
+                GOFLAGS = "-tags=tinygo,rp2040,pico_w"
+              }
             },
           },
         },

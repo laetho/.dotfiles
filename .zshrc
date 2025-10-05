@@ -32,7 +32,6 @@ export GONOPROXY='github.com/Mattilsynet/*'
 export GONOSUMDB='github.com/Mattilsynet/*'
 export GOPRIVATE='github.com/Mattilsynet/*'
 export FZF_BASE=/usr/bin
-source $ZSH/oh-my-zsh.sh
 # User configuration
 alias gal='gcloud auth login'
 alias gaal='gcloud auth application-default login'
@@ -80,5 +79,3 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/laetho/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
-export OPENAI_API_KEY=$(cat ~/chatgptkey.txt)
