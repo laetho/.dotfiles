@@ -40,6 +40,7 @@ alias ls="eza --icons=auto --long --all"
 alias l="ls"
 alias ll="ls"
 alias vim="nvim"
+alias task="go-task"
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 # Manage history file
 HISTFILE=~/.zsh_history

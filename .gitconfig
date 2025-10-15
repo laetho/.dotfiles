@@ -15,3 +15,12 @@
 
 [includeIf "hasconfig:remote.*.url:git@github.com:Mattilsynet/"]
 	path = ~/.gitconfig-mattilsynet
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+[pull]
+	rebase = true
+[init]
+	defaultBranch = master
