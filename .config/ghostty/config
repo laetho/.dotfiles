@@ -1,14 +1,14 @@
 # Dynamic theme colors
-config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+config-file = ?"~/.local/share/hyprland-themes/omarchy-osaka-jade-theme/ghostyy.conf"
 
 # Font
 font-family = "CaskaydiaMono Nerd Font"
 font-style = Regular
-font-size = 16 
+font-size = 12
 
 # Window
-window-padding-x = 14
-window-padding-y = 14
+window-padding-x = 3 
+window-padding-y = 3 
 confirm-close-surface=false
 resize-overlay = never
 
