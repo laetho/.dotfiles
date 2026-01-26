@@ -22,7 +22,7 @@ zinit light Aloxaf/fzf-tab
 autoload -U compinit && compinit
 zinit cdreplay -q
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/go:$HOME/go/bin:$PATH:/opt/google-cloud-cli/bin:~/.cargo/bin/
+export PATH=$HOME/go:$HOME/go/bin:$PATH:/opt/google-cloud-cli/bin:~/.cargo/bin/:/home/laetho/.local/bin
 # Set vim as EDITOR
 export EDITOR=vim
 # Path to your oh-my-zsh installation.
