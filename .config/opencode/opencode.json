@@ -8,16 +8,6 @@
       },
       "models": {
         "drama/code": {},
-        "Qwen/Qwen3-Next-80B-A3B-Instruct-FP8": {},
-        "Qwen/Qwen3-Coder-30B-A3B-Instruct-FP8": {},
-        "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8": {
-          "tool_call": true,
-          "reasoning": true,
-          "limit": {
-            "context": 256000,
-            "output": 10000
-          }
-        } 
       }
     },
     "llamacpp": {
@@ -30,16 +20,5 @@
       }
     }
   },
-  "model": "dramallama:openai/gpt-oss-120b",
-  "instructions": ["instruct01.md"],
-  "agent": {
-    "plan-drama": {
-      "model": "dramallama/drama/code",
-      "prompt": "Read-only planning agent. You may ONLY use read-only tools: Read, Glob, Grep. NEVER call Bash, Edit, Write, or Task. NEVER propose or perform file edits or command execution. Provide analysis and planning only."
-    },
-    "build-drama": {
-      "model": "dramallama/drama/code",
-      "prompt": "Tool-call format is strict. When calling a tool, output ONLY a valid tool call with a single JSON object matching the tool schema. Emit the FULL JSON arguments in one complete response (no partials or fragments). One tool call per response. Do not include any explanatory text, bullet lists, or extra content around the tool call. If unsure, ask a question instead of guessing tool args."
-    }
-  }
+  "model": "dramallama:drama/code",
 }
