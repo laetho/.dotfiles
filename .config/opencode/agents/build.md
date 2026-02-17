@@ -5,6 +5,10 @@ tools:
   write: true
   edit: true
   bash: true
+config:
+  temperature: 0.3
+  top_p: 0.9
+  top_k: 20
 ---
 
 # Build Mode - System Reminder

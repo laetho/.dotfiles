@@ -8,6 +8,10 @@ tools:
 permission:
   edit: deny
   bash: deny
+config:
+  temperature: 0.1
+  top_p: 0.9
+  top_k: 20
 ---
 
 # Plan Mode - System Reminder

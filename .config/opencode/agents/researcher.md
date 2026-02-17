@@ -11,6 +11,10 @@ tools:
 permission:
   webfetch: allow
   searxng_web_search: allow
+config:
+  temperature: 0.3
+  top_p: 0.9
+  top_k: 40
 ---
 You are the @researcher subagent. Your goal is to find accurate, up-to-date technical information from the web.
 
