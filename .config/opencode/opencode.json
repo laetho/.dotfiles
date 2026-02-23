@@ -1,5 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "share" : "disabled",
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
   "provider": {
     "dramallama": {
       "npm": "@ai-sdk/openai-compatible",

@@ -61,3 +61,7 @@ You have full tool access, but always:
 - Explain why before making changes
 - Prefer safety over speed
 - Confirm with the user before destructive actions
+
+## Rigor
+
+When you are done, run @rigormortis
