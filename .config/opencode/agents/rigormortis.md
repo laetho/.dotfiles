@@ -1,7 +1,7 @@
 ---
 description: @rigormortis agent for engineering rigor, quality, security, and documentation review.
 mode: primary
-model: "github-copilot/gpt-5.2-codex"
+model: "dramallama/drama/code"
 tools:
   read: true
   glob: true

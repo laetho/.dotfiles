@@ -2,6 +2,49 @@
 
 This repository contains opencode agent definitions and configuration for sampling behavior.
 
+## Agent Workflow
+
+The agents work together in a coordinated workflow:
+
+1. **plan** - Creates a detailed execution plan with specific tasks and objectives
+2. **build** - Executes the approved plan with full tool access
+3. **rigormortis** - Performs comprehensive security, correctness, and test coverage reviews
+
+Each agent has specific roles:
+- **plan**: Highly deterministic, focused on creating accurate execution strategies
+- **build**: Balanced execution with precise implementation
+- **rigormortis**: Conservative security review with comprehensive analysis
+
+### Agent Triggering
+
+- **plan**: Automatically invoked when a user submits a request requiring planning
+- **build**: Invoked after plan approval to execute the plan
+- **rigormortis**: Run manually or after build to review changes
+
+### Error Recovery
+
+If rigormortis finds issues:
+1. Review the findings in the output
+2. Modify the code as needed based on the recommendations
+3. Run rigormortis again to verify fixes
+
+## Plugins
+
+Custom plugins extend OpenCode's functionality by adding tools, hooks, and event handlers.
+
+### Available Plugins
+
+- **ytt** - Fetch YouTube video transcripts in markdown format
+  - Location: `plugins/ytt/`
+  - Entry point: `plugins/ytt/index.ts`
+  - Tool name: `ytt`
+  - Usage: Provide a YouTube URL or video ID to get the transcript
+  - How it works: The plugin adds a `ytt` tool that is automatically available to all agents. When you ask for a YouTube transcript, the agent will use the `ytt(url="...")` tool.
+  - Examples:
+    - `ytt(url="https://youtu.be/dQw4w9WgXcQ")`
+    - `ytt(url="dQw4w9WgXcQ")`
+    - `ytt(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", lang="es")`
+
 ## Sampling parameters
 
 The following sampling parameters control how deterministic or exploratory each agent behaves:

@@ -1,0 +1,29 @@
+{
+  "name": "@opencode/ytt",
+  "version": "1.0.0",
+  "description": "Fetch YouTube video transcripts in markdown format using yt-dlp",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "author": "opencode-ai",
+  "license": "MIT",
+  "keywords": ["youtube", "transcript", "subtitles", "yt-dlp", "ytt"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opencode/opencode-config"
+  },
+  "homepage": "https://opencode.ai/plugins",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.3"
+  }
+}

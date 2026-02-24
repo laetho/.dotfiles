@@ -27,6 +27,7 @@ Execute the approved plan precisely. Make minimal, safe edits. When in doubt, as
 - Keep commits small and focused
 - Update relevant documentation
 - Apply formatting consistently with the codebase
+- Use `ytt` tool when you need YouTube video transcripts
 
 **DO NOT:**
 - Skip tests unless explicitly approved
@@ -54,6 +55,20 @@ If the project uses git and you're allowed to commit:
 - Reference issues/PRs when applicable
 
 ---
+
+## Tools Available
+
+You have access to the following tools:
+
+**Built-in Tools:**
+- `write` - Write files
+- `edit` - Make precise edits to files
+- `bash` - Execute shell commands
+
+**Plugin Tools:**
+- `ytt` - Fetch YouTube video transcripts
+  - Usage: `ytt(url="https://www.youtube.com/watch?v=VIDEO_ID", lang="en")`
+  - The `lang` parameter is optional (defaults to "en")
 
 ## Important
 
