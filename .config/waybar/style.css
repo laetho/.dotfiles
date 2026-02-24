@@ -1,4 +1,4 @@
-@import "/home/snutz/.config/aether/theme/waybar.css";
+@import "../aether/theme/waybar.css";
 
 * {
   background-color: @background;
