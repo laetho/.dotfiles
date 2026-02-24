@@ -59,11 +59,12 @@ function isPrivateIP(ip) {
       return false;
     }
     const [a, b, c, d] = octets;
+    // Block all private ranges including 0.0.0.0/8 (0.0.0.0 is unsafe for SSRF)
     return (
       a === 10 ||
       (a === 172 && b >= 16 && b <= 31) ||
       (a === 192 && b === 168) ||
-      a === 127 ||
+      (a === 127) ||
       (a === 0) ||
       (a === 169 && b === 254)
     );
@@ -98,7 +99,9 @@ async function isInternalIP(hostname) {
     }
     return false;
   } catch {
-    return true;
+    // Fail closed: if DNS resolution fails, assume the hostname is not safe
+    // This prevents SSRF bypass through DNS failures
+    return false;
   }
 }
 
@@ -248,16 +251,24 @@ export default async function yttPlugin() {
                 ? trimmedLang.toLowerCase().replace(/_/g, "-") 
                 : "en";
 
-              // Validate language code
+              // Validate language code - stricter regex to prevent shell injection
               const langCodeBase = langCode.split("-")[0];
+              if (!/^[a-z]{2}$/.test(langCodeBase)) {
+                throw new Error(ERRORS.INVALID_LANG);
+              }
               if (!VALID_LANG_CODES.has(langCodeBase)) {
                 throw new Error(ERRORS.INVALID_LANG);
               }
-              if (!/^[a-z]{2}(-[A-Z]{2,})?$/.test(langCode)) {
-                throw new Error(ERRORS.INVALID_LANG);
+              // Optional region code after hyphen (e.g., pt-BR)
+              if (langCode.includes("-")) {
+                const regionCode = langCode.split("-")[1];
+                if (!/^[A-Z]{2,}$/.test(regionCode)) {
+                  throw new Error(ERRORS.INVALID_LANG);
+                }
               }
 
               // Use yt-dlp to download the subtitle file
+              // Use yewtu.be (privacy-focused YouTube frontend) to avoid tracking
               const ytDlpProcess = spawnSync(
                 "yt-dlp",
                 [

@@ -6,6 +6,7 @@ tools:
   read: true
   glob: true
   grep: true
+  ytt: true
   bash: false
   edit: false
   write: false

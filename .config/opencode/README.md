@@ -35,15 +35,57 @@ Custom plugins extend OpenCode's functionality by adding tools, hooks, and event
 ### Available Plugins
 
 - **ytt** - Fetch YouTube video transcripts in markdown format
-  - Location: `plugins/ytt/`
-  - Entry point: `plugins/ytt/index.ts`
+  - Location: `plugins/ytt.mjs`
+  - Entry point: `plugins/index.mjs`
   - Tool name: `ytt`
   - Usage: Provide a YouTube URL or video ID to get the transcript
   - How it works: The plugin adds a `ytt` tool that is automatically available to all agents. When you ask for a YouTube transcript, the agent will use the `ytt(url="...")` tool.
+  - Configuration: Add `"plugin": ["./plugins/index.mjs"]` to `opencode.json`
+  - Dependencies: Requires `yt-dlp` installed (`pip install yt-dlp`)
   - Examples:
     - `ytt(url="https://youtu.be/dQw4w9WgXcQ")`
     - `ytt(url="dQw4w9WgXcQ")`
     - `ytt(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", lang="es")`
+  - Troubleshooting:
+    - "No subtitles found" - Video may not have captions available
+    - "yt-dlp not installed" - Install via `pip install yt-dlp`
+
+- **searxng** - Search the web using a local SearxNG instance
+  - Location: `plugins/searxng.mjs`
+  - Entry point: `plugins/index.mjs`
+  - Tool name: `searxng_web_search`
+  - Usage: Search the web using a local SearxNG instance for privacy-focused results
+  - Configuration: Ensure a local SearxNG instance is running at `http://localhost:49217`
+  - Dependencies: Requires local SearxNG instance (https://github.com/searxng/searxng)
+  - Examples:
+    - `searxng_web_search(query="search query here")`
+  - Troubleshooting:
+    - "SearxNG request failed" - Verify SearxNG is running at the configured endpoint
+    - "SearxNG endpoint must be a local instance" - Ensure the endpoint is localhost
+
+### Plugin Structure
+
+Plugins are `.mjs` files in the `plugins/` directory. Each plugin exports a default async function that returns a `Hooks` object with tools:
+
+```javascript
+import { tool } from "@opencode-ai/plugin/tool";
+
+export default async function myPlugin() {
+  return {
+    tool: {
+      mytool: tool({
+        description: "Description of my tool",
+        args: {
+          arg1: tool.schema.string().describe("Description of arg1"),
+        },
+        async execute(args) {
+          return "Result";
+        },
+      }),
+    },
+  };
+}
+```
 
 ## Sampling parameters
 
@@ -74,3 +116,21 @@ The following sampling parameters control how deterministic or exploratory each 
 ## Where to change values
 
 Agent sampling parameters are defined in `agents/*.md` under the `config` section.
+
+## Troubleshooting
+
+### Plugin System Issues
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `yt-dlp not installed on the system` | Missing yt-dlp dependency | Install with `pip install yt-dlp` |
+| `No subtitles found` | Video has no captions | Check video has captions enabled on YouTube |
+| `SearxNG request failed` | SearxNG endpoint unavailable | Verify SearxNG is running at `http://localhost:49217` |
+| `SearxNG endpoint must be a local instance` | Endpoint not localhost | Ensure SearxNG is configured for localhost only |
+| `DNS resolution failure` | Network/DNS issues | Verify network connectivity and DNS configuration |
+
+### Security Notes
+
+- Both plugins include SSRF protection to block requests to internal IP ranges
+- The `ytt` plugin uses `yewtu.be` (privacy-focused YouTube frontend) to avoid tracking
+- The `searxng` plugin only allows localhost connections for security

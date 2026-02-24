@@ -5,6 +5,7 @@ tools:
   write: true
   edit: true
   bash: true
+  ytt: true
 config:
   temperature: 0.3
   top_p: 0.9

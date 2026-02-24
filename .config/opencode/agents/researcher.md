@@ -5,6 +5,7 @@ model: "github-copilot/gpt-5.2-codex"
 tools:
   webfetch: true
   searxng_web_search: true
+  ytt: true
   bash: false
   edit: false
   write: false

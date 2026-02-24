@@ -5,6 +5,7 @@ tools:
   write: false
   edit: false
   bash: false
+  ytt: true
 permission:
   edit: deny
   bash: deny
