@@ -32,6 +32,8 @@ If rigormortis finds issues:
 
 Custom plugins extend OpenCode's functionality by adding tools, hooks, and event handlers.
 
+For comprehensive plugin documentation including dependency management, see [`docs/PLUGINS.md`](docs/PLUGINS.md).
+
 ### Available Plugins
 
 - **ytt** - Fetch YouTube video transcripts in markdown format
@@ -41,7 +43,8 @@ Custom plugins extend OpenCode's functionality by adding tools, hooks, and event
   - Usage: Provide a YouTube URL or video ID to get the transcript
   - How it works: The plugin adds a `ytt` tool that is automatically available to all agents. When you ask for a YouTube transcript, the agent will use the `ytt(url="...")` tool.
   - Configuration: Add `"plugin": ["./plugins/index.mjs"]` to `opencode.json`
-  - Dependencies: Requires `yt-dlp` installed (`pip install yt-dlp`)
+  - Dependencies: Requires `yt-dlp` installed (`pip install --upgrade yt-dlp`)
+  - See [docs/PLUGINS.md](docs/PLUGINS.md) for rebuilding dependencies
   - Examples:
     - `ytt(url="https://youtu.be/dQw4w9WgXcQ")`
     - `ytt(url="dQw4w9WgXcQ")`
@@ -57,11 +60,15 @@ Custom plugins extend OpenCode's functionality by adding tools, hooks, and event
   - Usage: Search the web using a local SearxNG instance for privacy-focused results
   - Configuration: Ensure a local SearxNG instance is running at `http://localhost:49217`
   - Dependencies: Requires local SearxNG instance (https://github.com/searxng/searxng)
+  - See [docs/PLUGINS.md](docs/PLUGINS.md) for setup and troubleshooting
   - Examples:
     - `searxng_web_search(query="search query here")`
+  - Environment Variables:
+    - `SEARXNG_ENDPOINT` - Override the default endpoint (default: `http://localhost:49217/search`)
+    - Note: For production deployments, configure HTTPS by setting `SEARXNG_ENDPOINT` to an HTTPS URL
   - Troubleshooting:
     - "SearxNG request failed" - Verify SearxNG is running at the configured endpoint
-    - "SearxNG endpoint must be a local instance" - Ensure the endpoint is localhost
+    - "SearxNG endpoint must be a local instance" - Ensure SearxNG is configured for localhost only
 
 ### Plugin Structure
 
@@ -120,13 +127,86 @@ The following sampling parameters control how deterministic or exploratory each 
 
 Agent sampling parameters are defined in `agents/*.md` under the `config` section.
 
+## Plugin Dependencies
+
+### Rebuilding npm Dependencies
+
+If you encounter import errors or missing packages:
+
+```bash
+# Clean and reinstall all npm dependencies
+rm -rf node_modules package-lock.json
+npm install
+
+# Or if you have package-lock.json and want a clean install
+npm ci
+```
+
+### Redownloading System Dependencies
+
+#### yt-dlp (for ytt plugin)
+
+```bash
+# Reinstall/upgrade yt-dlp
+pip install --force-reinstall --upgrade yt-dlp
+
+# Verify the installation
+yt-dlp --version
+```
+
+**Alternative installation methods:**
+
+```bash
+# Using pip with user flag (no sudo required)
+pip install --user --upgrade yt-dlp
+
+# Using pip3 (Python 3 specific)
+pip3 install --upgrade yt-dlp
+
+# Using apt (Ubuntu/Debian)
+sudo apt install --reinstall yt-dlp
+
+# Using brew (macOS)
+brew reinstall yt-dlp
+
+# Manual installation with user flag (no sudo required)
+mkdir -p ~/.local/bin
+curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ~/.local/bin/yt-dlp
+chmod a+rx ~/.local/bin/yt-dlp
+# Add ~/.local/bin to your PATH (add this to ~/.bashrc or ~/.zshrc to persist)
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+Note: The `export PATH=...` command only persists for the current session. To make it permanent, add it to your shell profile (e.g., `~/.bashrc` or `~/.zshrc`).
+
+### Verifying Plugin Functionality
+
+```bash
+# Check npm dependencies
+npm ls
+
+# Check yt-dlp installation
+yt-dlp --version
+
+# Test the ytt plugin with a known video
+ytt(url="https://youtu.be/dQw4w9WgXcQ")
+
+# Test the searxng plugin
+searxng_web_search(query="test search")
+
+# Verify SEARXNG_ENDPOINT is set correctly
+echo "SEARXNG_ENDPOINT: ${SEARXNG_ENDPOINT:-http://localhost:49217/search}"
+```
+
 ## Troubleshooting
 
 ### Plugin System Issues
 
 | Error | Cause | Solution |
 |-------|-------|----------|
-| `yt-dlp not installed on the system` | Missing yt-dlp dependency | Install with `pip install yt-dlp` |
+| `Cannot find module '@opencode-ai/plugin'` | npm dependencies not installed | Run `rm -rf node_modules package-lock.json && npm install` |
+| `Cannot find module 'youtube-transcript'` | youtube-transcript not installed | Run `rm -rf node_modules package-lock.json && npm install` |
+| `yt-dlp not installed on the system` | Missing yt-dlp dependency | Run `pip install --upgrade yt-dlp` |
 | `No subtitles found` | Video has no captions | Check video has captions enabled on YouTube |
 | `SearxNG request failed` | SearxNG endpoint unavailable | Verify SearxNG is running at `http://localhost:49217` |
 | `SearxNG endpoint must be a local instance` | Endpoint not localhost | Ensure SearxNG is configured for localhost only |
@@ -135,6 +215,26 @@ Agent sampling parameters are defined in `agents/*.md` under the `config` sectio
 ### Security Notes
 
 - Both plugins include SSRF protection to block requests to internal IP ranges
+  - **ytt plugin**: Uses `isPrivateIP()` (lines 57-94) and `isInternalIP()` (lines 99-139) in `plugins/ytt.mjs` to check IPv4 and IPv6 private ranges
+  - **searxng plugin**: Uses `isPrivateIP()` (lines 31-62) and `isInternalIP()` (lines 67-106) in `plugins/searxng.mjs` with the same protection logic
 - The `ytt` plugin uses `yewtu.be` (privacy-focused YouTube frontend) to avoid tracking
 - The `searxng` plugin only allows localhost connections for security
 - Plugin functions accept an `input` parameter of type `PluginInput` which provides context like `sessionID`, `messageID`, `directory`, and `abort` signal
+
+### Verifying SSRF Protection
+
+To verify SSRF protection is working:
+
+```bash
+# Test that ytt plugin blocks internal IPs
+ytt(url="http://127.0.0.1:8080")
+# Expected: "Invalid YouTube URL - must be from youtube.com or youtu.be"
+
+# Test that searxng plugin blocks non-localhost endpoints
+searxng_web_search(query="test")
+# Expected: "SearxNG endpoint must be a local instance for security"
+```
+
+**Expected Security Error Messages:**
+- `ytt`: Should reject non-YouTube domains with "Invalid YouTube URL" errors
+- `searxng`: Should reject non-localhost endpoints with "SearxNG endpoint must be a local instance" errors
