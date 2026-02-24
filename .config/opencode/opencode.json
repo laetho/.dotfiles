@@ -17,5 +17,6 @@
       }
     }
   },
-  "model": "dramallama/drama/code"
+  "model": "dramallama/drama/code",
+  "plugin": ["./plugins/index.mjs"]
 }

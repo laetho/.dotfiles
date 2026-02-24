@@ -65,12 +65,13 @@ Custom plugins extend OpenCode's functionality by adding tools, hooks, and event
 
 ### Plugin Structure
 
-Plugins are `.mjs` files in the `plugins/` directory. Each plugin exports a default async function that returns a `Hooks` object with tools:
+Plugins are `.mjs` files in the `plugins/` directory. Each plugin exports a default async function that accepts `PluginInput` and returns a `Hooks` object with tools:
 
 ```javascript
 import { tool } from "@opencode-ai/plugin/tool";
+import type { PluginInput } from "@opencode-ai/plugin";
 
-export default async function myPlugin() {
+export default async function myPlugin(input: PluginInput) {
   return {
     tool: {
       mytool: tool({
@@ -78,13 +79,15 @@ export default async function myPlugin() {
         args: {
           arg1: tool.schema.string().describe("Description of arg1"),
         },
-        async execute(args) {
+        async execute(args, context) {
+          // context provides sessionID, messageID, agent, directory, worktree, abort signal
           return "Result";
         },
       }),
     },
   };
 }
+```
 ```
 
 ## Sampling parameters
@@ -134,3 +137,4 @@ Agent sampling parameters are defined in `agents/*.md` under the `config` sectio
 - Both plugins include SSRF protection to block requests to internal IP ranges
 - The `ytt` plugin uses `yewtu.be` (privacy-focused YouTube frontend) to avoid tracking
 - The `searxng` plugin only allows localhost connections for security
+- Plugin functions accept an `input` parameter of type `PluginInput` which provides context like `sessionID`, `messageID`, `directory`, and `abort` signal

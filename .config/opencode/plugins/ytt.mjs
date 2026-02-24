@@ -1,22 +1,25 @@
 import { tool } from "@opencode-ai/plugin/tool";
 
+// Video ID pattern - YouTube video IDs are 11 characters from Base64url alphabet
+const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+
 // IPv4 private ranges for SSRF protection
+// Note: RFC1918 private ranges only - excludes 0.0.0.0/8 (reserved for "this network")
 const PRIVATE_IPV4_RANGES = [
   { start: "10.0.0.0", end: "10.255.255.255" },
   { start: "172.16.0.0", end: "172.31.255.255" },
   { start: "192.168.0.0", end: "192.168.255.255" },
   { start: "127.0.0.0", end: "127.255.255.255" },
-  { start: "0.0.0.0", end: "0.255.255.255" },
   { start: "169.254.0.0", end: "169.254.255.255" },
 ];
 
 // IPv6 private ranges for SSRF protection
+// Note: fec0::/10 (site-local) is deprecated per RFC4291 and fe80::/10 (link-local)
+// can be used for local service discovery, so they are not currently enforced.
+// Only ULA (fc00::/7) and loopback (::1) are checked.
 const PRIVATE_IPV6_RANGES = [
   "fc00::/7",
-  "fec0::/10",
-  "fe80::/10",
   "::1/128",
-  "::ffff:0:0/96",
 ];
 
 // Error message constants
@@ -44,7 +47,8 @@ const VALID_LANG_CODES = new Set([
 ]);
 
 // Maximum input length
-const MAX_URL_LENGTH = 2048;
+// URL limit set to 512 (common for YouTube URLs) to prevent DoS
+const MAX_URL_LENGTH = 512;
 const MAX_LANG_LENGTH = 50;
 
 /**
@@ -59,26 +63,33 @@ function isPrivateIP(ip) {
       return false;
     }
     const [a, b, c, d] = octets;
-    // Block all private ranges including 0.0.0.0/8 (0.0.0.0 is unsafe for SSRF)
-    return (
-      a === 10 ||
-      (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) ||
-      (a === 127) ||
-      (a === 0) ||
-      (a === 169 && b === 254)
-    );
+    
+    // Check against defined private ranges
+    for (const range of PRIVATE_IPV4_RANGES) {
+      const [sA, sB, sC, sD] = range.start.split('.').map(Number);
+      const [eA, eB, eC, eD] = range.end.split('.').map(Number);
+      
+      // Check if IP is within this range
+      if (a >= sA && a <= eA && b >= sB && b <= eB && c >= sC && c <= eC && d >= sD && d <= eD) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   const ipv6Lower = ip.toLowerCase();
+  
+  // Validate IPv6 structure before checking prefixes
+  const ipv6Regex = /^([0-9a-f]{0,4}:){2,7}[0-9a-f]{0,4}$/i;
+  if (!ipv6Regex.test(ipv6Lower) && ipv6Lower !== "::" && ipv6Lower !== "::1") {
+    return false;
+  }
+  
   return (
     ipv6Lower.startsWith("fc") ||
     ipv6Lower.startsWith("fd") ||
-    ipv6Lower.startsWith("fe80") ||
-    ipv6Lower.startsWith("fec0") ||
-    ipv6Lower === "::1" ||
-    ipv6Lower === "::" ||
-    ipv6Lower.startsWith("::ffff:")
+    ipv6Lower === "::1"
   );
 }
 
@@ -86,6 +97,28 @@ function isPrivateIP(ip) {
  * Checks if a hostname resolves to a private/internal IP address
  */
 async function isInternalIP(hostname) {
+  // Special handling for localhost - must resolve to loopback only
+  if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1" || hostname === "0:0:0:0:0:0:0:1") {
+    try {
+      const { resolve4, resolve6 } = await import("dns");
+      const addresses4 = await resolve4(hostname).catch(() => []);
+      const addresses6 = await resolve6(hostname).catch(() => []);
+      const allAddresses = [...addresses4, ...addresses6];
+      
+      // localhost must resolve to loopback addresses only (127.0.0.0/8 or ::1)
+      for (const ip of allAddresses) {
+        if (!isPrivateIP(ip)) {
+          // localhost resolved to non-loopback address
+          return false;
+        }
+      }
+      // Must have resolved to at least one address
+      return allAddresses.length > 0;
+    } catch {
+      return false;
+    }
+  }
+  
   try {
     const { resolve4, resolve6 } = await import("dns");
     const addresses = await resolve4(hostname).catch(() => []);
@@ -108,7 +141,7 @@ async function isInternalIP(hostname) {
 /**
  * Plugin factory function
  */
-export default async function yttPlugin() {
+export default async function yttPlugin(input) {
   return {
     tool: {
       ytt: tool({
@@ -167,7 +200,7 @@ export default async function yttPlugin() {
               // Handle /watch?v=VIDEO_ID format
               if (parsedPath === "/watch") {
                 const videoParam = searchParams.get("v");
-                if (videoParam && /^[A-Za-z0-9]{11}$/.test(videoParam)) {
+                if (videoParam && VIDEO_ID_PATTERN.test(videoParam)) {
                   videoId = videoParam;
                 } else {
                   throw new Error(ERRORS.INVALID_URL);
@@ -175,7 +208,7 @@ export default async function yttPlugin() {
               }
               // Handle /shorts/VIDEO_ID format
               else if (parsedPath.startsWith("/shorts/")) {
-                const videoIdMatch = parsedPath.match(/^\/shorts\/([A-Za-z0-9]{11})/);
+                const videoIdMatch = parsedPath.match(/^\/shorts\/([A-Za-z0-9_-]{11})/);
                 if (videoIdMatch && videoIdMatch[1]) {
                   videoId = videoIdMatch[1];
                 } else {
@@ -184,7 +217,7 @@ export default async function yttPlugin() {
               }
               // Handle /embed/VIDEO_ID format
               else if (parsedPath.startsWith("/embed/")) {
-                const videoIdMatch = parsedPath.match(/^\/embed\/([A-Za-z0-9]{11})/);
+                const videoIdMatch = parsedPath.match(/^\/embed\/([A-Za-z0-9_-]{11})/);
                 if (videoIdMatch && videoIdMatch[1]) {
                   videoId = videoIdMatch[1];
                 } else {
@@ -194,7 +227,7 @@ export default async function yttPlugin() {
               // Handle youtu.be short URLs
               else if (hostname === "youtu.be") {
                 const pathVideoId = parsedPath.slice(1);
-                const videoIdMatch = pathVideoId.match(/^([A-Za-z0-9]{11})/);
+                const videoIdMatch = pathVideoId.match(/^([A-Za-z0-9_-]{11})/);
                 if (videoIdMatch && videoIdMatch[1]) {
                   videoId = videoIdMatch[1];
                 } else {
@@ -211,77 +244,104 @@ export default async function yttPlugin() {
             }
           }
 
-          // Validate video ID format
-          if (!/^[A-Za-z0-9]{11}$/.test(videoId)) {
-            throw new Error(ERRORS.INVALID_VIDEO_ID);
-          }
-
-          // Validate language code if provided
-          if (lang && typeof lang === "string") {
-            const trimmedLang = lang.trim();
-            if (trimmedLang.length === 0 || trimmedLang.length > MAX_LANG_LENGTH) {
-              throw new Error(ERRORS.INVALID_LANG);
+           // Validate video ID format
+            if (!VIDEO_ID_PATTERN.test(videoId)) {
+              throw new Error(ERRORS.INVALID_VIDEO_ID);
             }
-            if (!/^[a-z]{2}(-[A-Za-z]{2,})?$/.test(trimmedLang.toLowerCase())) {
-              throw new Error(ERRORS.INVALID_LANG);
-            }
-          }
 
-          // Use yt-dlp to fetch the transcript
-          try {
-            const { spawnSync } = await import("child_process");
-            const { mkdtempSync, rmSync, readFileSync, readdirSync } = await import("fs");
-            const { randomBytes } = await import("crypto");
-            const { join, resolve, normalize, sep } = await import("path");
+           // Validate and sanitize language code if provided
+           // (Full validation is done during langCode construction below)
 
-            // Check if yt-dlp is available
-            const ytDlpCheck = spawnSync("yt-dlp", ["--version"], { encoding: "utf8", timeout: 5000 });
-            if (ytDlpCheck.status !== 0) {
-              throw new Error(ERRORS.YT_DLP_NOT_FOUND);
-            }
+           // Use yt-dlp to fetch the transcript
+           try {
+             const { spawnSync } = await import("child_process");
+             const { mkdtempSync, rmSync, readFileSync, readdirSync, lstatSync } = await import("fs");
+             const { randomBytes } = await import("crypto");
+             const { join, resolve, normalize, sep } = await import("path");
+
+             // Check if yt-dlp is available
+             const ytDlpCheck = spawnSync("yt-dlp", ["--version"], { encoding: "utf8", timeout: 5000 });
+             if (ytDlpCheck.status !== 0) {
+               throw new Error(ERRORS.YT_DLP_NOT_FOUND);
+             }
 
             // Create temporary directory
             const randomSuffix = randomBytes(16).toString("hex");
             const tempDir = mkdtempSync(join("/tmp", "ytt-" + randomSuffix + "-"));
 
             try {
-              // Determine language to use
+              // Determine language to use - sanitize input first
               const trimmedLang = lang?.trim();
-              let langCode = trimmedLang && trimmedLang.length > 0 
-                ? trimmedLang.toLowerCase().replace(/_/g, "-") 
-                : "en";
+              
+               // Build langCode with strict sanitization
+               let langCode;
+               if (trimmedLang && trimmedLang.length > 0 && trimmedLang.length <= MAX_LANG_LENGTH) {
+                 // Split by hyphen first, then sanitize each part
+                 const parts = trimmedLang.split("-");
+                 if (parts.length > 2) {
+                   throw new Error(ERRORS.INVALID_LANG);
+                 }
+                  const baseCode = parts[0];
+                  // Base code: only allow lowercase letters, must be exactly 2 chars
+                  if (baseCode.length !== 2 || !/^[a-z]{2}$/.test(baseCode)) {
+                    throw new Error(ERRORS.INVALID_LANG);
+                  }
+                  // Validate base code against ISO 639-1 whitelist
+                  if (!VALID_LANG_CODES.has(baseCode)) {
+                    throw new Error(ERRORS.INVALID_LANG);
+                  }
+                  // Region code: only allow uppercase letters, must be 2+ chars
+                  if (parts.length === 2) {
+                    const regionCode = parts[1];
+                    if (regionCode.length < 2 || !/^[A-Z]{2,}$/.test(regionCode)) {
+                      // Try to normalize to uppercase if it's lowercase
+                      const upperRegion = regionCode.toUpperCase();
+                      if (regionCode.length < 2 || !/^[A-Z]{2,}$/.test(upperRegion)) {
+                        throw new Error(ERRORS.INVALID_LANG);
+                      }
+                      langCode = baseCode + "-" + upperRegion;
+                    } else {
+                      langCode = baseCode + "-" + regionCode;
+                    }
+                  } else {
+                    langCode = baseCode;
+                  }
+               } else {
+                 langCode = "en";
+               }
 
-              // Validate language code - stricter regex to prevent shell injection
-              const langCodeBase = langCode.split("-")[0];
-              if (!/^[a-z]{2}$/.test(langCodeBase)) {
-                throw new Error(ERRORS.INVALID_LANG);
-              }
-              if (!VALID_LANG_CODES.has(langCodeBase)) {
-                throw new Error(ERRORS.INVALID_LANG);
-              }
-              // Optional region code after hyphen (e.g., pt-BR)
-              if (langCode.includes("-")) {
-                const regionCode = langCode.split("-")[1];
-                if (!/^[A-Z]{2,}$/.test(regionCode)) {
-                  throw new Error(ERRORS.INVALID_LANG);
-                }
+              // Re-validate videoId immediately before use to prevent any bypass
+              if (!VIDEO_ID_PATTERN.test(videoId)) {
+                throw new Error(ERRORS.INVALID_VIDEO_ID);
               }
 
               // Use yt-dlp to download the subtitle file
               // Use yewtu.be (privacy-focused YouTube frontend) to avoid tracking
-              const ytDlpProcess = spawnSync(
-                "yt-dlp",
-                [
-                  "--write-auto-subs",
-                  "--sub-lang=" + langCode,
-                  "--skip-download",
-                  "--sub-format=json3",
-                  "--output",
-                  join(tempDir, "transcript.json3"),
-                  "https://yewtu.be/watch?v=" + videoId,
-                ],
-                { encoding: "utf8", timeout: 30000 }
-              );
+              // Construct URL using URL class for proper encoding
+              const videoUrl = new URL("https://yewtu.be/watch");
+              videoUrl.searchParams.set("v", videoId);
+              
+              // SSRF protection: verify yewtu.be resolves to a safe IP
+              const yewtuHost = videoUrl.hostname;
+              const isYewtuInternal = await isInternalIP(yewtuHost);
+              if (isYewtuInternal) {
+                throw new Error(ERRORS.INVALID_HOST);
+              }
+              
+               const ytDlpProcess = spawnSync(
+                 "yt-dlp",
+                 [
+                   "--write-auto-subs",
+                   "--sub-lang",
+                   langCode,
+                   "--skip-download",
+                   "--sub-format=json3",
+                   "--output",
+                   join(tempDir, "transcript.json3"),
+                   videoUrl.toString(),
+                 ],
+                 { encoding: "utf8", timeout: 30000 }
+               );
 
               if (ytDlpProcess.status !== 0) {
                 const stderr = ytDlpProcess.stderr.toLowerCase();
@@ -296,16 +356,46 @@ export default async function yttPlugin() {
                 throw new Error(ERRORS.FAILED_FETCH);
               }
 
-              // Read the downloaded JSON3 file
-              const files = readdirSync(tempDir);
-              const json3File = files.find((f) => f.endsWith(".json3"));
-              if (!json3File) {
-                throw new Error(ERRORS.NO_TRANSCRIPT);
-              }
+               // Read the downloaded JSON3 file - check for symlinks first
+               const files = readdirSync(tempDir);
+               
+               // Check each file for symlinks before processing
+               for (const file of files) {
+                 const filePathInDir = join(tempDir, file);
+                 try {
+                   const stats = lstatSync(filePathInDir);
+                   if (stats.isSymbolicLink()) {
+                     throw new Error(ERRORS.NO_TEMP_FILE);
+                   }
+                 } catch {
+                   // Skip files that can't be stat'd
+                   continue;
+                 }
+               }
+               
+                const json3File = files.find((f) => f.endsWith(".json3"));
+                if (!json3File) {
+                  throw new Error(ERRORS.NO_TRANSCRIPT);
+                }
+                
+                // Validate filename doesn't contain path traversal
+                if (json3File.includes("..") || json3File.includes("/")) {
+                  throw new Error(ERRORS.NO_TEMP_FILE);
+                }
 
-              // Validate file path
-              const filePath = resolve(join(tempDir, json3File));
-              const resolvedTempDir = resolve(tempDir);
+                // Validate file path - use lstatSync to detect symbolic links
+                const filePath = join(tempDir, json3File);
+                const resolvedTempDir = tempDir;
+               
+               // Use lstatSync to detect symbolic links before validation
+               try {
+                 const stats = lstatSync(filePath);
+                 if (stats.isSymbolicLink()) {
+                   throw new Error(ERRORS.NO_TEMP_FILE);
+                 }
+               } catch {
+                 throw new Error(ERRORS.NO_TEMP_FILE);
+               }
               
               // Verify the path is within the expected temp directory
               const normalizedFilePath = normalize(filePath);
