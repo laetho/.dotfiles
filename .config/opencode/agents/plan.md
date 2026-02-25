@@ -65,4 +65,5 @@ The user explicitly requested planning only — you MUST NOT make any edits. Thi
 
 ## Rigor
 
-When you are done, run @rigormortis
+Always analyze plans with @rigormortis. So run @rigormortis when a plan is modified or created.
+
