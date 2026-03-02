@@ -4,16 +4,23 @@
   "compaction": {
     "auto": true,
     "prune": true,
-    "reserved": 10000
+    "reserved": 32000
   },
   "provider": {
     "dramallama": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "https://lame.ai.mattilsynet.io/v1"
+        "baseURL": "https://lame.ai.mattilsynet.io/v1",
+        "apiKey": "key1"
       },
       "models": {
-        "drama/code": {}
+        "drama/code": {},
+        "drama/code-thinking": {
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }
       }
     }
   },
