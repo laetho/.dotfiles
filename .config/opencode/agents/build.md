@@ -1,6 +1,7 @@
 ---
 description: @build agent. Execute the approved plan with full tool access.
 mode: primary
+model: "dramallama/drama/code"
 tools:
   write: true
   edit: true

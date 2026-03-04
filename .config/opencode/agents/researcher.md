@@ -1,7 +1,7 @@
 ---
 description: @researcher subagent that searches the web for documentation, error codes, and library updates using searxng.
 mode: subagent
-model: "github-copilot/gpt-5.2-codex"
+model: "dramallama/drama/code-thinking"
 tools:
   webfetch: true
   searxng_web_search: true

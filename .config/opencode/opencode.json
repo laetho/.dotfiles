@@ -25,7 +25,6 @@
       "npm": "@ai-sdk/openai-compatible",
       "options": {
         "baseURL": "https://lame.ai.mattilsynet.io/v1",
-        "apiKey": "key1"
       },
       "models": {
         "drama/code": {},
@@ -38,6 +37,14 @@
       }
     }
   },
-  "model": "dramallama/drama/code",
+  "permission": {
+    "read": {
+      "*.envrc": "deny",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "**/secrets/**": "deny"
+    }
+  },
+  "model": "dramallama/drama/code-thinking",
   "plugin": ["./plugins/index.mjs"]
 }

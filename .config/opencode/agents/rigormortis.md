@@ -1,7 +1,7 @@
 ---
 description: @rigormortis agent for engineering rigor, quality, security, and documentation review.
 mode: primary
-model: "dramallama/drama/code"
+model: "dramallama/drama/code-thinking"
 tools:
   read: true
   glob: true
@@ -12,7 +12,7 @@ tools:
   write: false
   apply_patch: false
   webfetch: false
-  searxng_web_search: false
+  searxng_web_search: true 
   task: false
   todowrite: false
 permission:

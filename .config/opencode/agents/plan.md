@@ -1,6 +1,7 @@
 ---
 description: @plan mode. Analyze and construct a well-formed plan without making any edits.
 mode: primary
+model: "dramallama/drama/code-thinking"
 tools:
   write: false
   edit: false
