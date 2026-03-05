@@ -10,9 +10,15 @@
     "llama.cpp": {
       "npm": "@ai-sdk/openai-compatible",
       "options": {
-        "baseURL": "http://localhost:8080/v1"
+        "baseURL": "http://localhost:8001/v1"
       },
       "models": {
+        "unsloth/Qwen3.5-9B-GGUF": {
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        },
         "unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL": {
           "modalities": {
             "input": ["text", "image"],
