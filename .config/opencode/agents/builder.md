@@ -1,22 +1,119 @@
 ---
-description: @build agent. Execute the approved plan with full tool access.
+description: @builder agent. Execute the approved plan with least-privilege tool access.
 mode: primary
-model: "dramallama/drama/code"
+model: "dramallama/code"
+variant: "instruct-general"
 tools:
+  read: true
+  glob: true
+  grep: true
   write: true
   edit: true
-  bash: true
+  task: true
+  apply_patch: true
+  bash: false
   ytt: true
+permission:
+  "*": deny
+  read:
+    "*": allow
+    "**/.envrc": deny
+    "**/.env": deny
+    "**/.env.*": deny
+    "**/*.env": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+    "**/*.p12": deny
+    "**/*.pfx": deny
+    "**/*.crt": deny
+    "**/*.cer": deny
+    "**/.ssh/**": deny
+    "**/secrets/**": deny
+    "**/.git-credentials": deny
+    "**/.npmrc": deny
+    "**/.docker/config.json": deny
+    "**/*credentials*": deny
+    "**/*password*": deny
+    "**/*secret*": deny
+  glob: allow
+  grep: ask
+  write:
+    "*": allow
+    "**/.envrc": deny
+    "**/.env": deny
+    "**/.env.*": deny
+    "**/*.env": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+    "**/*.p12": deny
+    "**/*.pfx": deny
+    "**/*.crt": deny
+    "**/*.cer": deny
+    "**/.ssh/**": deny
+    "**/secrets/**": deny
+    "**/.git-credentials": deny
+    "**/.npmrc": deny
+    "**/.docker/config.json": deny
+    "**/*credentials*": deny
+    "**/*password*": deny
+    "**/*secret*": deny
+  edit:
+    "*": allow
+    "**/.envrc": deny
+    "**/.env": deny
+    "**/.env.*": deny
+    "**/*.env": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+    "**/*.p12": deny
+    "**/*.pfx": deny
+    "**/*.crt": deny
+    "**/*.cer": deny
+    "**/.ssh/**": deny
+    "**/secrets/**": deny
+    "**/.git-credentials": deny
+    "**/.npmrc": deny
+    "**/.docker/config.json": deny
+    "**/*credentials*": deny
+    "**/*password*": deny
+    "**/*secret*": deny
+  apply_patch:
+    "*": allow
+    "**/.envrc": deny
+    "**/.env": deny
+    "**/.env.*": deny
+    "**/*.env": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+    "**/*.p12": deny
+    "**/*.pfx": deny
+    "**/*.crt": deny
+    "**/*.cer": deny
+    "**/.ssh/**": deny
+    "**/secrets/**": deny
+    "**/.git-credentials": deny
+    "**/.npmrc": deny
+    "**/.docker/config.json": deny
+    "**/*credentials*": deny
+    "**/*password*": deny
+    "**/*secret*": deny
+  bash: deny
+  task:
+    "*": deny
+    rigormortis: allow
+  question: allow
+  ytt: allow
 config:
-  temperature: 0.3
+  temperature: 0.1
   top_p: 0.9
+  min_p: 0.4
   top_k: 20
 last_updated: "2026-03-05"
 ---
 
-# Build Mode - System Reminder
+# Builder Mode - System Reminder
 
-You are in BUILD/EXECUTION PHASE. You have full permission to modify files and run commands.
+You are in BUILD/EXECUTION PHASE. You have permission to modify files and run approved tools.
 
 ## Responsibility
 
@@ -40,20 +137,20 @@ Execute the approved plan precisely. Make minimal, safe edits. When in doubt, as
 
 1. Review the plan and confirm understanding
 2. Make changes incrementally
-3. Run relevant tests after each major change
+3. Run relevant tests after each major change when command execution is available; otherwise ask the user to run tests and report results.
 4. Report status clearly after each step
 5. Ask before destructive operations (rm, mv, config changes)
 
 ## Commit Hygiene (Optional)
 
-If the project uses git and you're allowed to commit:
+If the project uses git and you're allowed to commit (and shell/git tooling is available in your environment):
 - Prefix commits: `feat:`, `fix:`, `test:`, `docs:`, `chore:`
 - Keep commits focused on a single change
 - Reference issues/PRs when applicable
 
 ## Important
 
-You have full tool access, but always:
+You have scoped tool access, but always:
 - Explain why before making changes
 - Prefer safety over speed
 - Confirm with the user before destructive actions

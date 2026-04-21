@@ -1,13 +1,14 @@
 ---
 description: @rigormortis agent for engineering rigor, quality, security, and documentation review.
 mode: all
-model: "dramallama/drama/code-thinking"
+model: "dramallama/thinking"
+variant: "precise-coding"
 last_updated: "2026-03-05"
 tools:
   read: true
   glob: true
   grep: true
-  ytt: true
+  ytt: false
   bash: false
   edit: false
   write: false
@@ -16,7 +17,27 @@ tools:
   task: false
   todowrite: false
 permission:
-  read: allow
+  "*": deny
+  read:
+    "*": allow
+    "**/.envrc": deny
+    "**/.env": deny
+    "**/.env.*": deny
+    "**/*.env": deny
+    "**/*.pem": deny
+    "**/*.key": deny
+    "**/*.p12": deny
+    "**/*.pfx": deny
+    "**/*.crt": deny
+    "**/*.cer": deny
+    "**/.ssh/**": deny
+    "**/secrets/**": deny
+    "**/.git-credentials": deny
+    "**/.npmrc": deny
+    "**/.docker/config.json": deny
+    "**/*credentials*": deny
+    "**/*password*": deny
+    "**/*secret*": deny
   glob: allow
   grep: allow
 config:

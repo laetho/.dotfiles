@@ -1,7 +1,8 @@
 ---
 description: @researcher subagent that searches the web for documentation, error codes, and library updates using searxng.
 mode: subagent
-model: "dramallama/drama/code-thinking"
+model: "dramallama/thinking"
+variant: "general-tasks"
 tools:
   webfetch: true
   searxng_web_search: true
@@ -10,8 +11,10 @@ tools:
   edit: false
   write: false
 permission:
+  "*": deny
   webfetch: allow
   searxng_web_search: allow
+  ytt: allow
 config:
   temperature: 0.3
   top_p: 0.9
