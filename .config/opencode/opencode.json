@@ -102,8 +102,9 @@
     }
   },
   "permission": {
-    "*": "deny",
+    "*": "ask",
     "read": {
+      "*": "allow",
       "**/.envrc": "deny",
       "**/.env": "deny",
       "**/.env.*": "deny",
@@ -124,6 +125,7 @@
       "**/*secret*": "deny"
     },
     "edit": {
+      "*": "ask",
       "**/.envrc": "deny",
       "**/.env": "deny",
       "**/.env.*": "deny",
@@ -144,6 +146,7 @@
       "**/*secret*": "deny"
     },
     "write": {
+      "*": "ask",
       "**/.envrc": "deny",
       "**/.env": "deny",
       "**/.env.*": "deny",

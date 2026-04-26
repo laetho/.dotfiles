@@ -12,6 +12,7 @@ tools:
   task: true
   bash: false
   ytt: false
+  question: true
 permission:
   "*": deny
   read:

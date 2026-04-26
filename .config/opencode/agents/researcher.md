@@ -5,6 +5,7 @@ model: "dramallama/thinking"
 variant: "general-tasks"
 tools:
   webfetch: true
+  websearch: true
   searxng_web_search: true
   ytt: true
   bash: false
