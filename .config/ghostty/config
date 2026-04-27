@@ -12,7 +12,10 @@ background-opacity = 0.9
 window-padding-x = 3 
 window-padding-y = 3 
 confirm-close-surface=false
-resize-overlay = never
+
+resize-overlay = always
+resize-overlay-position = center
+resize-overlay-duration = 5s
 
 # Cursor styling
 cursor-style = "block"
