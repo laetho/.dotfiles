@@ -11,7 +11,7 @@ tools:
   edit: true
   task: true
   apply_patch: true
-  bash: false
+  bash: true 
   ytt: true
 permission:
   "*": deny
