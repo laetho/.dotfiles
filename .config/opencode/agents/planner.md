@@ -10,7 +10,7 @@ tools:
   write: false
   edit: false
   task: true
-  bash: false
+  bash: true 
   ytt: false
   question: true
 permission:
@@ -36,10 +36,11 @@ permission:
     "**/*password*": deny
     "**/*secret*": deny
   glob: allow
-  grep: ask
+  grep: allow 
   task:
     "*": deny
     rigormortis: allow
+    researcher: allow
   question: allow
   edit: deny
   bash: deny

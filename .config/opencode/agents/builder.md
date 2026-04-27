@@ -36,7 +36,7 @@ permission:
     "**/*password*": deny
     "**/*secret*": deny
   glob: allow
-  grep: ask
+  grep: allow 
   write:
     "*": allow
     "**/.envrc": deny
