@@ -14,7 +14,6 @@ tools:
   bash: true 
   ytt: true
 permission:
-  "*": deny
   read:
     "*": allow
     "**/.envrc": deny
@@ -97,7 +96,7 @@ permission:
     "**/*credentials*": deny
     "**/*password*": deny
     "**/*secret*": deny
-  bash: deny
+  bash: allow 
   task:
     "*": deny
     rigormortis: allow

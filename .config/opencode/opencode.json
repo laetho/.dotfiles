@@ -102,9 +102,7 @@
     }
   },
   "permission": {
-    "*": "ask",
-    "read": {
-      "*": "allow",
+    "*": {
       "**/.envrc": "deny",
       "**/.env": "deny",
       "**/.env.*": "deny",
@@ -128,16 +126,16 @@
       "**/.aws/**": "deny",
       "**/*.tfvars": "deny"
     },
-    "glob": { "*": "allow" },
-    "grep": { "*": "allow" },
-    "list": { "*": "allow" },
+    "glob": "allow",
+    "grep": "allow",
+    "list": "allow",
     "codesearch": "allow",
-    "lsp": { "*": "allow" },
-    "edit": { "*": "deny" },
-    "write": { "*": "deny" },
-    "bash": { "*": "deny" },
-    "task": { "*": "deny" },
-    "skill": { "*": "ask" },
+    "lsp": "allow",
+    "edit": "deny",
+    "write": "deny",
+    "bash": "deny",
+    "task": "deny",
+    "skill": "allow",
     "webfetch": "allow",
     "websearch": "allow",
     "question": "allow",
