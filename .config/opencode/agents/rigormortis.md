@@ -3,7 +3,6 @@ description: @rigormortis agent for engineering rigor, quality, security, and do
 mode: all
 model: "dramallama/thinking"
 variant: "precise-coding"
-last_updated: "2026-03-05"
 tools:
   read: true
   glob: true

@@ -3,7 +3,6 @@ description: @archer agent for plan review, feasibility analysis, and architectu
 mode: all
 model: "dramallama/thinking"
 variant: "precise-coding"
-last_updated: "2026-04-27"
 tools:
   read: true
   glob: true

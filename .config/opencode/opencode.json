@@ -101,48 +101,6 @@
       }
     }
   },
-  "permission": {
-    "*": {
-      "**/.envrc": "deny",
-      "**/.env": "deny",
-      "**/.env.*": "deny",
-      "**/*.env": "deny",
-      "**/*.pem": "deny",
-      "**/*.key": "deny",
-      "**/*.p12": "deny",
-      "**/*.pfx": "deny",
-      "**/*.crt": "deny",
-      "**/*.cer": "deny",
-      "**/.ssh/**": "deny",
-      "**/secrets/**": "deny",
-      "**/.git-credentials": "deny",
-      "**/.npmrc": "deny",
-      "**/.docker/config.json": "deny",
-      "**/*credentials*": "deny",
-      "**/*password*": "deny",
-      "**/*secret*": "deny",
-      "**/id_rsa*": "deny",
-      "**/id_ed25519*": "deny",
-      "**/.aws/**": "deny",
-      "**/*.tfvars": "deny"
-    },
-    "glob": "allow",
-    "grep": "allow",
-    "list": "allow",
-    "codesearch": "allow",
-    "lsp": "allow",
-    "edit": "deny",
-    "write": "deny",
-    "bash": "deny",
-    "task": "deny",
-    "skill": "allow",
-    "webfetch": "allow",
-    "websearch": "allow",
-    "question": "allow",
-    "todowrite": "deny",
-    "external_directory": "deny",
-    "doom_loop": "deny"
-  },
   "default_agent": "planner",
   "agent": {
     "plan": {

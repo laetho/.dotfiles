@@ -80,3 +80,12 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/laetho/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# Added by Unsloth installer
+export PATH="$HOME/.local/bin:$PATH"
+
+# Pi coding agent aliases
+alias pi-plan="pi --tools read,grep,find,ls"
+alias pi-build="pi"
+alias pi-review="pi --tools read,grep,find,ls"
+
